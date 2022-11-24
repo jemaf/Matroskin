@@ -17,6 +17,9 @@ beniget = "^0.4.1"
 SQLAlchemy-Utils = "^0.37.8"
 [tool.poetry.dev-dependencies]
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.0"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
