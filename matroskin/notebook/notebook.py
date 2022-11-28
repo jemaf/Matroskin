@@ -143,42 +143,43 @@ class Aggregator:
 
         build_in_functions_set = set(builtin_functions + collection_functions_names)
 
-        used_functions_series = self.cells_df.used_functions. \
-            explode().replace('', float('Nan')).dropna()
-
         defined_functions_series = self.cells_df.defined_functions. \
             replace("", float('Nan')).dropna().apply(lambda line: line.split(' ')).explode()
         defined_functions_set = set(defined_functions_series)
 
-        imported_entities = self.cells_df.imported_entities.explode().to_numpy()
+        imported_entities = self.cells_df.imported_entities.explode().to_numpy()     
+        
+        all_functions_used = []
+        defined_functions_used = []
+        build_in_functions_used, notebook_built_in_functions_set = [], set()
+        api_functions_used, api_functions_set = [], set()
+        for function in filter(lambda f: f['function'] != '', self.cells_df.functions.explode().dropna()):  
+            all_functions_used.append(function)
+            if function['function'] in defined_functions_set:   
+                defined_functions_used.append(function)
+            if function['function'] in build_in_functions_set:
+                build_in_functions_used.append(function)
+                notebook_built_in_functions_set.add(function['function'])
+            if function['module'] in imported_entities or function['function'] in imported_entities:
+                api_functions_used.append(function)
+                api_functions_set.add(function['function'])
 
-        defined_functions_used = [function for function in used_functions_series
-                                  if function in defined_functions_set]
-
-        build_in_functions_used = [function for function in used_functions_series
-                                   if function in build_in_functions_set]
-
-        api_functions_used = [
-            function['function']
-            for function in self.cells_df.functions.explode().dropna()
-            if (function['module'] in imported_entities or
-                function['function'] in imported_entities)
-        ]
-        api_functions_set = set(api_functions_used)
-
-        other_functions_used = [function for function in used_functions_series
-                                if (function not in defined_functions_set
-                                    and function not in api_functions_set
-                                    and function not in build_in_functions_set)]
+        other_functions_used = [function for function in all_functions_used
+                                if (function['function'] not in defined_functions_set
+                                    and function['function'] not in api_functions_set
+                                    and function['function'] not in build_in_functions_set)]
 
         stats = {
             'API_functions_count': len(api_functions_set),
             'defined_functions_count': len(defined_functions_set),
             'API_functions_uses': len(api_functions_used),
             'defined_functions_uses': len(defined_functions_used),
-            'build_in_functions_count': len(set(build_in_functions_used)),
+            'build_in_functions_count': len(notebook_built_in_functions_set),
             'build_in_functions_uses': len(build_in_functions_used),
-            'other_functions_uses': len(other_functions_used)
+            'other_functions_uses': len(other_functions_used),
+            'API_functions_calls': [f['call'] for f in api_functions_used],
+            'defined_functions_calls': [f['call'] for f in defined_functions_used],
+            'other_functions_calls': [f['call'] for f in other_functions_used]
         }
 
         return stats

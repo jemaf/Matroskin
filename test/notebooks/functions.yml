@@ -5,3 +5,14 @@ metrics:
   'defined_functions_count': 3
   'defined_functions_uses': 3
   'notebook_cells_number': 4
+  'API_functions_calls': [
+
+  ]
+  'defined_functions_calls': [
+    'defined_function_1()',
+    'defined_function_2()',
+    'defined_function_3()'
+  ]
+  'other_functions_calls': [
+    
+  ]

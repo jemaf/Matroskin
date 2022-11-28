@@ -102,8 +102,8 @@ class ComplexityVisitor(ast.NodeVisitor):
         self.inner_functions = functions_visitor.inner_functions
 
         self.functions_and_args = self.get_used_functions(node)
-        self.used_functions = [f['function'] for f in self.functions_and_args]
-        self.functions = set(self.used_functions)
+        self.used_functions = [{'name': f['function'], 'call': f['call']} for f in self.functions_and_args]
+        self.functions = set([f['name'] for f in self.used_functions])
 
         if isinstance(node, (ast.AsyncFor, ast.While, ast.If,
                              ast.With, ast.AsyncWith)):
@@ -125,35 +125,62 @@ class ComplexityVisitor(ast.NodeVisitor):
     def visit_ClassDef(self, node):
         self.class_definitions.append(node.name)
 
+    def get_function_call(self, function_dict):
+        if function_dict['module'] != '':
+            prefix = f"{function_dict['module']}.{function_dict['function']}"
+        else:
+            prefix = function_dict['function']
+        
+        args = [
+            (f"'{a.value}'"if isinstance(a.value, str) else str(a.value)) if isinstance(a, ast.Constant)
+            else str(a.id) if isinstance(a, ast.Name)
+            else self.get_function_call(self.get_used_function(a))
+            for a in function_dict['args']
+        ]
+        keywords = [
+            f"{k.arg}=" + (f"'{k.value.value}'"if isinstance(k.value.value, str) else str(k.value.value)) if isinstance(k.value, ast.Constant)
+            else f"{k.arg}={k.value.id}" if isinstance(k.value, ast.Name)
+            else f"{k.arg}={self.get_function_call(self.get_used_function(k.value))}"
+            for k in function_dict['keywords']
+        ]
+        args_and_keywords = args + keywords
+            
+        return f"{prefix}({','.join(args_and_keywords)})"
+
     def get_used_functions(self, ast_source):
         functions = []
         for node in filter(lambda nd: isinstance(nd, ast.Call), ast.walk(ast_source)):            
-            if isinstance(node.func, ast.Name):
-                function_name = node.func.id
-                function_args = node.args
-                function_keywords = node.keywords
-                function_module = ''
-
-            elif isinstance(node.func, ast.Attribute):
-                function_name = node.func.attr
-                function_args = node.args
-                function_keywords = node.keywords
-                if isinstance(node.func.value, ast.Name) \
-                        and node.func.value.id in self.imported_entities:
-                    function_module = node.func.value.id
-                else:
-                    function_module = ''
-            elif isinstance(node.func, ast.Call) \
-                    and isinstance(node.func.func, ast.Name):
-                function_name = node.func.func.id
-                function_args = node.args
-                function_keywords = node.keywords
-                function_module = ''
-            else:
-                continue
-            functions.append({'function': function_name, 'args': function_args, 'keywords': function_keywords, 'module': function_module})
-
+            function_used = self.get_used_function(node)
+            if function_used != None:
+                function_used['call'] = self.get_function_call(function_used)
+                functions.append(function_used)
         return functions
+    
+    def get_used_function(self, ast_node):
+        if isinstance(ast_node.func, ast.Name):
+            function_name = ast_node.func.id
+            function_args = ast_node.args
+            function_keywords = ast_node.keywords
+            function_module = ''
+
+        elif isinstance(ast_node.func, ast.Attribute):
+            function_name = ast_node.func.attr
+            function_args = ast_node.args
+            function_keywords = ast_node.keywords
+            if isinstance(ast_node.func.value, ast.Name) \
+                    and ast_node.func.value.id in self.imported_entities:
+                function_module = ast_node.func.value.id
+            else:
+                function_module = ''
+        elif isinstance(ast_node.func, ast.Call) \
+                and isinstance(ast_node.func.func, ast.Name):
+            function_name = ast_node.func.func.id
+            function_args = ast_node.args
+            function_keywords = ast_node.keywords
+            function_module = ''
+        else:
+            return None
+        return {'function': function_name, 'args': function_args, 'keywords': function_keywords, 'module': function_module}
 
     def visit_Import(self, node):
         self.imports += [alias.name for alias in node.names]

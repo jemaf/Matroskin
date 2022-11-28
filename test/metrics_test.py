@@ -17,6 +17,7 @@ def test_complexity_metrics(metrics):
     filename, metric_name, expected_metric_value = expected_result
 
     print(f'{filename}\t{metric_name}')
-    assert aggregated_metrics[metric_name] == expected_metric_value
-
-
+    if isinstance(expected_metric_value, list):
+        assert sorted(aggregated_metrics[metric_name]) == sorted(expected_metric_value)
+    else:
+        assert aggregated_metrics[metric_name] == expected_metric_value
