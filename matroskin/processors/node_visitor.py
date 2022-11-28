@@ -127,15 +127,17 @@ class ComplexityVisitor(ast.NodeVisitor):
 
     def get_used_functions(self, ast_source):
         functions = []
-        for node in filter(lambda nd: isinstance(nd, ast.Call), ast.walk(ast_source)):
+        for node in filter(lambda nd: isinstance(nd, ast.Call), ast.walk(ast_source)):            
             if isinstance(node.func, ast.Name):
                 function_name = node.func.id
                 function_args = node.args
+                function_keywords = node.keywords
                 function_module = ''
 
             elif isinstance(node.func, ast.Attribute):
                 function_name = node.func.attr
                 function_args = node.args
+                function_keywords = node.keywords
                 if isinstance(node.func.value, ast.Name) \
                         and node.func.value.id in self.imported_entities:
                     function_module = node.func.value.id
@@ -145,10 +147,11 @@ class ComplexityVisitor(ast.NodeVisitor):
                     and isinstance(node.func.func, ast.Name):
                 function_name = node.func.func.id
                 function_args = node.args
+                function_keywords = node.keywords
                 function_module = ''
             else:
                 continue
-            functions.append({'function': function_name, 'args': function_args, 'module': function_module})
+            functions.append({'function': function_name, 'args': function_args, 'keywords': function_keywords, 'module': function_module})
 
         return functions
 

@@ -12,6 +12,6 @@ metrics:
   'coupling_between_methods': 1
   'defined_functions_count': 10
   'API_functions_count': 9
-  'API_functions_uses': 16
-  'defined_functions_uses': 20
+  'API_functions_uses': 17
+  'defined_functions_uses': 23
   'other_functions_uses': 2
