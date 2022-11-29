@@ -1,6 +1,8 @@
 import pytest
 from test_utils import get_metrics
 
+import os
+os.chdir("test")
 
 @pytest.mark.parametrize('metrics', get_metrics())
 def test_complexity_metrics(metrics):
