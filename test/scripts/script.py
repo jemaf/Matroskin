@@ -1,5 +1,6 @@
 from package1 import fun0, fun1, fun2, fun3
 from package2 import tmp1, tmp2, tmp3; from package3 import tmp4
+from package import PackageClass
 import package
 import new_package as p2
 
@@ -83,6 +84,8 @@ package.p_function1(1,d2=2)
 var9 = package.p_function2(fun0(), 2)
 var10, var11 = p2.new_function()
 
+objVar = A()
+objPackage = PackageClass()
 var12 = A.method2()
 A.method2()
 loo(10)

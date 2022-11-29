@@ -98,7 +98,7 @@ class ComplexityVisitor(ast.NodeVisitor):
         functions_visitor = FunctionDefsVisitor()
         functions_visitor.visit(node)
 
-        self.defined_functions = functions_visitor.defined_functions
+        self.defined_functions = functions_visitor.defined_functions | set(self.class_definitions)
         self.inner_functions = functions_visitor.inner_functions
 
         self.functions_and_args = self.get_used_functions(node)

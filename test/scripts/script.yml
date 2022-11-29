@@ -10,10 +10,10 @@ metrics:
   'mean_attributes_count': 4
   'coupling_between_functions': 5
   'coupling_between_methods': 1
-  'defined_functions_count': 10
-  'API_functions_count': 9
-  'API_functions_uses': 17
-  'defined_functions_uses': 23
+  'defined_functions_count': 11
+  'API_functions_count': 10
+  'API_functions_uses': 18
+  'defined_functions_uses': 24
   'other_functions_uses': 2
   'API_functions_calls': [
     'package.p_function4(1,method3(2,2,2),3,4)',
@@ -32,7 +32,8 @@ metrics:
     'package.p_function1(1,2)',
     'package.p_function1(1,d2=2)',
     'package.p_function2(fun0(),2)',
-    'p2.new_function()'
+    'p2.new_function()',
+    'PackageClass()'
   ]
   'defined_functions_calls': [
     'method3(1,1,1)',
@@ -57,7 +58,8 @@ metrics:
     'doo(d1=1,d2=2)',
     'doo(d1=1,d2=2,d3=3)',
     'method2()',
-    'method2()'
+    'method2()',
+    'A()'
   ]
   'other_functions_calls': [
     'loo(10)',
