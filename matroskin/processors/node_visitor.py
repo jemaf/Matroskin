@@ -125,34 +125,12 @@ class ComplexityVisitor(ast.NodeVisitor):
     def visit_ClassDef(self, node):
         self.class_definitions.append(node.name)
 
-    def get_function_call(self, function_dict):
-        if function_dict['module'] != '':
-            prefix = f"{function_dict['module']}.{function_dict['function']}"
-        else:
-            prefix = function_dict['function']
-        
-        args = [
-            (f"'{a.value}'"if isinstance(a.value, str) else str(a.value)) if isinstance(a, ast.Constant)
-            else str(a.id) if isinstance(a, ast.Name)
-            else self.get_function_call(self.get_used_function(a))
-            for a in function_dict['args']
-        ]
-        keywords = [
-            f"{k.arg}=" + (f"'{k.value.value}'"if isinstance(k.value.value, str) else str(k.value.value)) if isinstance(k.value, ast.Constant)
-            else f"{k.arg}={k.value.id}" if isinstance(k.value, ast.Name)
-            else f"{k.arg}={self.get_function_call(self.get_used_function(k.value))}"
-            for k in function_dict['keywords']
-        ]
-        args_and_keywords = args + keywords
-            
-        return f"{prefix}({','.join(args_and_keywords)})"
-
     def get_used_functions(self, ast_source):
         functions = []
         for node in filter(lambda nd: isinstance(nd, ast.Call), ast.walk(ast_source)):            
             function_used = self.get_used_function(node)
             if function_used != None:
-                function_used['call'] = self.get_function_call(function_used)
+                function_used['call'] = ast.unparse(node)
                 functions.append(function_used)
         return functions
     

@@ -16,12 +16,12 @@ metrics:
   'defined_functions_uses': 24
   'other_functions_uses': 2
   'API_functions_calls': [
-    'package.p_function4(1,method3(2,2,2),3,4)',
+    'package.p_function4(1, self.method3(2, 2, 2), 3, 4)',
     'fun1(fun2())',
     'fun3(var5)',
     'fun2()',
     'fun3(2)',
-    'package.p_function3(1,2,3)',
+    'package.p_function3(1, 2, 3)',
     'fun0()',
     'fun0()',
     'fun0()',
@@ -29,16 +29,16 @@ metrics:
     'fun0()',
     'fun1()',
     'fun3()',
-    'package.p_function1(1,2)',
-    'package.p_function1(1,d2=2)',
-    'package.p_function2(fun0(),2)',
+    'package.p_function1(1, 2)',
+    'package.p_function1(1, d2=2)',
+    'package.p_function2(fun0(), 2)',
     'p2.new_function()',
     'PackageClass()'
   ]
   'defined_functions_calls': [
-    'method3(1,1,1)',
-    'method3(2,2,2)',
-    'method3(2,2,2)',
+    'self.method3(1, 1, 1)',
+    'self.method3(2, 2, 2)',
+    'self.method3(2, 2, 2)',
     'goo()',
     'goo()',
     'foo()',
@@ -54,14 +54,14 @@ metrics:
     'goo(1)',
     'doo(1)',
     'foo(1)',
-    'doo(1,2,d3=3)',
-    'doo(d1=1,d2=2)',
-    'doo(d1=1,d2=2,d3=3)',
-    'method2()',
-    'method2()',
+    "doo(1, '2', d3=3)",
+    'doo(d1=1, d2=2)',
+    'doo(d1=1, d2=2, d3=3)',
+    'A.method2()',
+    'objPackage.method2()',
     'A()'
   ]
   'other_functions_calls': [
     'loo(10)',
-    'lol()'
+    'kek.lol()'
   ]

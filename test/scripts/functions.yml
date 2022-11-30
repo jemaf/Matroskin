@@ -13,11 +13,11 @@ metrics:
   'coupling_between_functions': 2
   'API_functions_calls': [
     'api_function1(d_f_arg1)',
-    'api_function2(d_f_arg2,d_f_arg1)',
+    'api_function2(d_f_arg2, d_f_arg1)',
     'api_function3()',
     'api_function1()',
-    'package1.p1_function1(d_f_arg1,d_f_arg2,d_f_arg3)',
-    "api_class1.cl1_function1(1,2,'3')",
+    'package1.p1_function1(d_f_arg1, d_f_arg2, d_f_arg3)',
+    "api_class1.cl1_function1(1, 2, '3')",
     'package1.p1_function1()',
     'package3.p3_function1()'
   ]
