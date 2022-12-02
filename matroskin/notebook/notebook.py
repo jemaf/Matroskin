@@ -177,9 +177,9 @@ class Aggregator:
             'build_in_functions_count': len(notebook_built_in_functions_set),
             'build_in_functions_uses': len(build_in_functions_used),
             'other_functions_uses': len(other_functions_used),
-            'API_functions_calls': [f['call'] for f in api_functions_used],
-            'defined_functions_calls': [f['call'] for f in defined_functions_used],
-            'other_functions_calls': [f['call'] for f in other_functions_used]
+            'API_functions_calls': ';'.join([f['call'] for f in api_functions_used]),
+            'defined_functions_calls': ';'.join([f['call'] for f in defined_functions_used]),
+            'other_functions_calls': ';'.join([f['call'] for f in other_functions_used])
         }
 
         return stats

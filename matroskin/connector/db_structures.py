@@ -108,6 +108,10 @@ class NotebookFeaturesDb(base):
     API_functions_uses = Column(Integer, default=0)
     defined_functions_uses = Column(Integer, default=0)
     other_functions_uses = Column(Integer, default=0)
+    
+    API_functions_calls = Column(Text, default=None)
+    defined_functions_calls = Column(Text, default=None)
+    other_functions_calls = Column(Text, default=None)
 
     build_in_functions_uses = Column(Integer, default=0)
     build_in_functions_count = Column(Integer, default=0)
