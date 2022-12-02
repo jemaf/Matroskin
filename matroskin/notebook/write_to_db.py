@@ -10,19 +10,17 @@ def write_notebook_to_db(conn, nb_metadata, cells):
         notebook_version=nb_metadata['version'],
     )
 
-    exists = conn.query(
-        conn.query(db_structures.NotebookDb).
-        filter_by(notebook_name=nb_metadata['name']).exists()
-    ).scalar()
+    exists = (conn.query(db_structures.NotebookDb).
+        filter_by(notebook_name=nb_metadata['name']).one())
 
     if not exists:
         conn.add(ntb)
         conn.commit()
-        conn = write_cells_to_db(conn, cells, ntb.notebook_id)
-
-        return ntb.notebook_id
     else:
-        return 0
+        ntb.notebook_id = exists.notebook_id
+        
+    conn = write_cells_to_db(conn, cells, ntb.notebook_id)
+    return ntb.notebook_id
 
 
 def write_features_to_db(conn, nb_metadata, features):
@@ -36,32 +34,26 @@ def write_features_to_db(conn, nb_metadata, features):
         if key in cell_attributes:
             setattr(nbf, key, cell_flatten[key])
 
-    conn.add(nbf)
+    conn.merge(nbf)
     conn.commit()
 
     return cell_flatten
 
 
-def write_cells_to_db(conn, cells, notebook_id):
-    cells_to_db = []
-    processed_cells = []
-
+def write_cells_to_db(conn, cells, notebook_id):  
     for cell in cells:
-        cell_db = db_structures.CellDb(notebook_id=notebook_id)
-        cells_to_db.append(cell_db)
-
-        processed_cells.append(process_cell(cell))
-
-    conn.add_all(cells_to_db)
+        cell_db = db_structures.CellDb(notebook_id=notebook_id, 
+                                       cell_id=cell.get('cell_id'))
+        conn.merge(cell_db)
+        conn.flush()
+        
+        processed_cell_db = process_cell(cell)
+        processed_cell_db.notebook_id = cell_db.notebook_id
+        processed_cell_db.cell_id = cell_db.cell_id
+        conn.merge(processed_cell_db)
+        conn.flush()
+        
     conn.commit()
-
-    for i, cell in enumerate(cells_to_db):
-        processed_cells[i].cell_id = cell.cell_id
-        processed_cells[i].notebook_id = cell.notebook_id
-
-    conn.add_all(processed_cells)
-    conn.commit()
-
     return conn
 
 
