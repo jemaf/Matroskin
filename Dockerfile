@@ -7,5 +7,3 @@ RUN apt-get install -y make
 
 RUN pip install poetry && \
     pip install psycopg2-binary
-
-WORKDIR /workspaces/Matroskin
