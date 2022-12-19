@@ -6,16 +6,20 @@ from .node_visitor import ComplexityVisitor, OOPVisitor
 
 
 def get_ast(cell_source):
-    try:
-        code_ast = ast.parse(cell_source)
-        return code_ast
-    except SyntaxError as e:
-        code_string = cell_source.splitlines()
-        del code_string[e.lineno - 1]
-        code_string = '\n'.join(code_string)
-        return get_ast(code_string)
-
-
+    is_parsed = False
+    
+    while not is_parsed:
+        try:
+            code_ast = ast.parse(cell_source)
+            is_parsed = True
+        except SyntaxError as e:
+            code_string = cell_source.splitlines()
+            del code_string[e.lineno - 1]
+            code_string = '\n'.join(code_string)
+            cell_source = code_string
+    return code_ast     
+    
+    
 class CodeProcessor(CellProcessor):
     visitors = [
         ComplexityVisitor,
